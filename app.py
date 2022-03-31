@@ -11,7 +11,7 @@ for (dirpath, dirnames, filenames) in walk(os.getcwd()):
     break
 
 rows = ['produto', 'ncm', 'unidade', 'quantidade', 'valorUnidade',
-        'valorProduto', 'destCNPJ', 'comprador', 'dataEmissao']
+        'valorProduto', 'destCNPJ/destCPF', 'comprador', 'dataEmissao']
 dataList = [rows]
 
 for xml in f:
@@ -21,6 +21,12 @@ for xml in f:
             data = f.read()
             soup = BeautifulSoup(data, 'lxml')
             products = soup.find_all('prod')
+            def check_cnpj(self):
+                    cnpj = soup.find('dest').find('cnpj')
+                    if cnpj:
+                        return 'cnpj'
+                    else:
+                        return 'cpf'
             for product in products:
                 try:
                     dataList.append([product.find('xprod').getText(),
@@ -29,12 +35,11 @@ for xml in f:
                                  product.find('qcom').getText(),
                                  product.find('vuncom').getText(),
                                  product.find('vprod').getText(),
-                                 soup.find('dest').find('cnpj').getText(),
+                                 soup.find('dest').find(check_cnpj).getText(),
                                  soup.find('dest').find('xnome').getText(),
                                  soup.find('dhemi').getText()])
                     pd.DataFrame(dataList).to_csv("vendas.csv")
-                except:
-                    pass
+                except Exception as e:
+                    print({xml},repr(e))
 
 print("Processamento finalizado com sucesso")
-
