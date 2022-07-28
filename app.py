@@ -41,5 +41,7 @@ for xml in f:
                     pd.DataFrame(dataList).to_csv("vendas.csv")
                 except Exception as e:
                     print({xml},repr(e))
+                except:
+                    pass
 
 print("Processamento finalizado com sucesso")
