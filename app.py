@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+import csv
 from os import walk
 from bs4 import BeautifulSoup
 
@@ -38,7 +38,10 @@ for xml in f:
                                  soup.find('dest').find(check_cnpj).getText(),
                                  soup.find('dest').find('xnome').getText(),
                                  soup.find('dhemi').getText()])
-                    pd.DataFrame(dataList).to_csv("vendas.csv")
+                    with open('vendas.csv', 'w') as f:
+                        write = csv.writer(f)
+                        
+                        write.writerows(dataList)
                 except Exception as e:
                     print({xml},repr(e))
                 except:
